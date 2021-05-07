@@ -1,16 +1,22 @@
 package aplication;
 
 import java.awt.Dimension;
+import java.awt.FontFormatException;
 import java.awt.Toolkit;
+import java.io.IOException;
 
+import model.UserBDimplementation;
+import model.UserController;
 import view.PVMainWindowLogin;
 
 public class Principal {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FontFormatException, IOException {
 		// TODO Auto-generated method stub
 
-		PVMainWindowLogin pvMain=new PVMainWindowLogin();
+		UserController userData=new UserBDimplementation();
+		
+		PVMainWindowLogin pvMain=new PVMainWindowLogin(userData);
 		pvMain.setVisible(true);
 		
 		

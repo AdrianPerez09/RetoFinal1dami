@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 public class PoliceUserBDimplementation implements PoliceUserController {
@@ -13,6 +14,7 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 	private PreparedStatement stmt;
 	
 	final String listCase ="SELECT * FROM OPENCASE";
+	final String caseAssigned="SELECT o.codcase FROM opencase o,case_assigned cs,police p where o.codcase=cs.codcase and p.coduser=cs.coduserp and p.coduser=?";
 	final String selectCase ="SELECT * FROM OPENCASE WHERE CODCASE=?";
 	final String listSuspect ="SELECT * FROM SUSPECT";
 	final String selectSuspect ="SELECT * FROM SUSPECT WHERE CODSUS=?";
@@ -58,8 +60,8 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 
 					if (rs.next()) {
 						cas = new Case();
-						cas.setCodCase(wcodCase);
-						cas.setDesc(rs.getString("descriptions"));
+						cas.setCodCase(rs.getString("codcase"));
+						cas.setDesc(rs.getString("description"));
 						cas.setNameCase(rs.getString("nameCase"));
 						cas.setLocation(rs.getString("location"));
 					} else
@@ -108,7 +110,7 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 
 					if (rs.next()) {
 						sus = new Suspect();
-						sus.setCodSus(rs.getString(wcodSus));
+						sus.setCodSus(rs.getString(1));
 						sus.setName(rs.getString("name"));
 						sus.setSurname(rs.getString("surname"));
 						sus.setBirthDate(rs.getDate("birthDate"));
@@ -141,12 +143,14 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 	}
 
 	@Override
-	public Case obtainCase() {
+	public ArrayList<Case> obtainCase() {
 		// TODO Auto-generated method stub
 		
 		ResultSet rs = null;
 		Case cas= null;
 
+		ArrayList<Case>cases=new ArrayList<>();
+		
 
 				this.openConnection();
 
@@ -156,12 +160,113 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 
 					rs = stmt.executeQuery();
 
-					if (rs.next()) {
+					while (rs.next()) {
 						cas = new Case();
-						cas.setCodCase("codCase");
-						cas.setDesc(rs.getString("descriptions"));
+						cas.setCodCase(rs.getString(1));
+						cas.setDesc(rs.getString("description"));
 						cas.setNameCase(rs.getString("nameCase"));
 						cas.setLocation(rs.getString("location"));
+						cases.add(cas);
+					}
+				} catch (SQLException e) {
+					System.out.println("Error de SQL");
+					e.printStackTrace();
+				} finally {
+			
+					if (rs != null) {
+						try {
+							rs.close();
+						} catch (SQLException ex) {
+							System.out.println("Error en cierre del ResultSet");
+						}
+					}
+					try {
+						this.closeConnection();
+					} catch (SQLException e) {
+						System.out.println("Error en el cierre de la BD");
+						e.printStackTrace();
+					}
+				}
+
+				return cases;
+	
+
+	}
+
+	@Override
+	public ArrayList<Suspect> obtainSuspect() {
+		// TODO Auto-generated method stub
+		
+		
+		ResultSet rs = null;
+		Suspect sus= null;
+		ArrayList<Suspect>suspects=new ArrayList<Suspect>();
+
+
+				this.openConnection();
+
+				try {
+					stmt = con.prepareStatement(listSuspect);
+
+
+					rs = stmt.executeQuery();
+
+					while(rs.next()){  
+						sus = new Suspect();
+						sus.setCodSus(rs.getString("codSus"));
+						sus.setName(rs.getString("name"));
+						sus.setSurname(rs.getString("surname"));
+						sus.setBirthDate(rs.getDate("birthDate"));				
+						suspects.add(sus);
+						
+					}
+				} catch (SQLException e) {
+					System.out.println("Error de SQL");
+					e.printStackTrace();
+				} finally {
+			
+					if (rs != null) {
+						try {
+							rs.close();
+						} catch (SQLException ex) {
+							System.out.println("Error en cierre del ResultSet");
+						}
+					}
+					try {
+						this.closeConnection();
+					} catch (SQLException e) {
+						System.out.println("Error en el cierre de la BD");
+						e.printStackTrace();
+					}
+				}
+
+				return suspects;
+
+	
+	}
+
+	@Override
+	public Case caseAssigned(String wCodUser) {
+		// TODO Auto-generated method stub
+		
+
+		ResultSet rs = null;
+		Case cas= null;
+
+
+				this.openConnection();
+
+				try {
+					stmt = con.prepareStatement(caseAssigned);
+
+				
+					stmt.setString(1, wCodUser);
+
+					rs = stmt.executeQuery();
+
+					if (rs.next()) {
+						cas = new Case();
+						cas.setCodCase(rs.getString(1));					
 					} else
 						cas = null;
 				} catch (SQLException e) {
@@ -185,59 +290,6 @@ public class PoliceUserBDimplementation implements PoliceUserController {
 				}
 
 				return cas;
-	
-
-	}
-
-	@Override
-	public Suspect obtainSuspect() {
-		// TODO Auto-generated method stub
-		
-		
-		ResultSet rs = null;
-		Suspect sus= null;
-
-
-				this.openConnection();
-
-				try {
-					stmt = con.prepareStatement(listSuspect);
-
-
-					rs = stmt.executeQuery();
-
-					if (rs.next()) {
-						sus = new Suspect();
-						sus.setCodSus(rs.getString("codSus"));
-						sus.setName(rs.getString("name"));
-						sus.setSurname(rs.getString("surname"));
-						sus.setBirthDate(rs.getDate("birthDate"));
-					
-					} else
-						sus = null;
-				} catch (SQLException e) {
-					System.out.println("Error de SQL");
-					e.printStackTrace();
-				} finally {
-			
-					if (rs != null) {
-						try {
-							rs.close();
-						} catch (SQLException ex) {
-							System.out.println("Error en cierre del ResultSet");
-						}
-					}
-					try {
-						this.closeConnection();
-					} catch (SQLException e) {
-						System.out.println("Error en el cierre de la BD");
-						e.printStackTrace();
-					}
-				}
-
-				return sus;
-
-	
 	}
 
 	
