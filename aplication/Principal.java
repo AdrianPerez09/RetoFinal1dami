@@ -3,6 +3,8 @@ package aplication;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
+import model.UserBDimplementation;
+import model.UserController;
 import view.PVMainWindowLogin;
 
 public class Principal {
@@ -10,7 +12,9 @@ public class Principal {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 
-		PVMainWindowLogin pvMain=new PVMainWindowLogin();
+		UserController userData=new UserBDimplementation();
+		
+		PVMainWindowLogin pvMain=new PVMainWindowLogin(userData);
 		pvMain.setVisible(true);
 		
 		

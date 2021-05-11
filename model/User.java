@@ -1,12 +1,13 @@
 package model;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 public class User {
 private String codUser;
 private String name;
 private String surname;
-private LocalDate birthDate;
+private Date birthDate;
 public String getCodUser() {
 	return codUser;
 }
@@ -25,10 +26,10 @@ public String getSurname() {
 public void setSurname(String surname) {
 	this.surname = surname;
 }
-public LocalDate getBirthDate() {
+public Date getBirthDate() {
 	return birthDate;
 }
-public void setBirthDate(LocalDate birthDate) {
+public void setBirthDate(Date birthDate) {
 	this.birthDate = birthDate;
 }
 public User() {
