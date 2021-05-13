@@ -117,12 +117,13 @@ public class PVMainWindowLogin extends JFrame implements ActionListener{
 				adm=userData.getAdminData(wCodUser, wPassword);
 				vAdmin=new PVAdministratorWindowMain(adm,administratorInterface,this);
 				this.setVisible(false);
-				vAdmin.setVisible(true);
+				
 
 				Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 				int x = (int) ((dimension.getWidth() - vAdmin.getWidth()) / 2);
 				int y = (int) ((dimension.getHeight() - vAdmin.getHeight()) / 2);
 				vAdmin.setLocation(x, y);
+				vAdmin.setVisible(true);
 			}
 			
 			if(managerLogged) {

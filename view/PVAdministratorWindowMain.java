@@ -61,7 +61,10 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 	private JLabel lblTick;
 	private JTable usersTable;
 	private JTable queryUserTable;
-
+	private JScrollPane scrollPane;
+	private JButton btnSearchUser;
+	private JTable table;
+	private JPanel panelSearchUser;
 	public PVAdministratorWindowMain(Administrator adm, AdministratorController administratorInterface,
 			PVMainWindowLogin pvMainWindowLogin) {
 		setModal(true);
@@ -251,7 +254,7 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		btnModify.setBounds(297, 112, 103, 23);
 		panel2.add(btnModify);
 
-		JPanel panelSearchUser = new JPanel();
+		panelSearchUser = new JPanel();
 		panelSearchUser.setBackground(new Color(176, 196, 222));
 		pestañas.addTab("Search User", panelSearchUser);
 		panelSearchUser.setLayout(null);
@@ -266,9 +269,13 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		lblSearchUser.setBounds(129, 62, 155, 39);
 		panelSearchUser.add(lblSearchUser);
 
-		JButton btnSearchUser = new JButton("Search");
+		btnSearchUser = new JButton("Search");
 		btnSearchUser.setBounds(280, 112, 94, 23);
+		btnSearchUser.addActionListener(this);
 		panelSearchUser.add(btnSearchUser);
+		
+		
+		
 
 		ArrayList<User> users = administratorInterface.obtainUsers();
 		if (users.size() > 0) {
@@ -290,7 +297,7 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			scrollPane.setBounds(58, 182, 660, 330);
 			panelSearchUser.add(scrollPane);
 
-			String titulos[] = { "Case code", "Description", "Case name", "Location", };
+			String titulos[] = { "User code", "Name", "Surname", "Birthdate"};
 			usersTable = new JTable(matrizTabla, titulos) {
 				public boolean editCellAt(int row, int column, java.util.EventObject e) {
 					return false;
@@ -304,8 +311,12 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			usersTable.setBorder(blackline);
 			usersTable.setShowVerticalLines(true);
 			usersTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
-			scrollPane.setViewportView(usersTable);
+			if(scrollPane!=null) {
+				
+				
+				scrollPane.setViewportView(usersTable);
 
+			}
 			JTableHeader tableHeader = usersTable.getTableHeader();
 			tableHeader.setBackground(new Color(20, 57, 122));
 			tableHeader.setForeground(Color.WHITE);
@@ -313,65 +324,11 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			tableHeader.setBorder(blackline);
 			tableHeader.setEnabled(true);
 		}
-		User user = new User();
+		
 
-		user = administratorInterface.queryUser(tfCodeUser.getText());
+		
 
-		if (user != null) {
-
-			ArrayList<User> users2 = new ArrayList<User>();
-
-			users2.add(user);
-			usersTable.setVisible(false);
-
-			if (users2.size() > 0) {
-				String matrizTabla[][] = new String[users2.size()][4];
-				for (int i = 0; i < users2.size(); i++) {
-
-					matrizTabla[i][0] = users2.get(i).getCodUser();
-					matrizTabla[i][1] = users2.get(i).getName();
-					matrizTabla[i][2] = users2.get(i).getSurname();
-					matrizTabla[i][3] = users2.get(i).getBirthDate().toString();
-					
-
-				}
-
-				Border blackline;
-
-				blackline = BorderFactory.createLineBorder(Color.black, 1);
-
-				String titulos[] = { "Case code", "Description", "Case name", "Location", };
-				queryUserTable = new JTable(matrizTabla, titulos) {
-					public boolean editCellAt(int row, int column, java.util.EventObject e) {
-						return false;
-					}
-				};
-
-				queryUserTable.setSelectionBackground(new Color(46, 46, 46));
-				queryUserTable.setSelectionForeground(Color.WHITE);
-				queryUserTable.setRowMargin(0);
-				queryUserTable.setRowHeight(25);
-				queryUserTable.setBorder(blackline);
-				queryUserTable.setShowVerticalLines(true);
-				queryUserTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
-				scrollPane.setViewportView(queryUserTable);
-
-				JTableHeader tableHeader = caseQueryTable.getTableHeader();
-				tableHeader.setBackground(new Color(20, 57, 122));
-				tableHeader.setForeground(Color.WHITE);
-				tableHeader.setFont(new Font("Tahoma", Font.BOLD, 15));
-				tableHeader.setBorder(blackline);
-				tableHeader.setEnabled(true);
-			}
-
-		}
-
-		else if (cas == null) {
-
-			JOptionPane.showMessageDialog(this, "Case not found");
-		}
-
-	}
+	
 
 		JPanel panelDeleteUser = new JPanel();
 		panelDeleteUser.setBackground(new Color(176, 196, 222));
@@ -441,6 +398,83 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			int x = (int) ((dimension.getWidth() - login.getWidth()) / 2);
 			int y = (int) ((dimension.getHeight() - login.getHeight()) / 2);
 			login.setLocation(x, y);
+		}
+		if(e.getSource().equals(btnSearchUser)){
+			User user = new User();
+
+			user = administratorInterface.queryUser(tfSearchUser.getText());
+			
+			System.out.println(tfCodeUser.getText());
+			
+			
+
+			if (user != null) {
+
+				
+				
+				ArrayList<User> users2 = new ArrayList<User>();
+
+				users2.add(user);
+				usersTable.setVisible(false);
+
+				
+				System.out.println(user.getCodUser());
+				if (users2.size() > 0) {
+					String matrizTabla[][] = new String[users2.size()][4];
+					for (int i = 0; i < users2.size(); i++) {
+
+						matrizTabla[i][0] = users2.get(i).getCodUser();
+						matrizTabla[i][1] = users2.get(i).getName();
+						matrizTabla[i][2] = users2.get(i).getSurname();
+						matrizTabla[i][3] = users2.get(i).getBirthDate().toString();
+						
+
+					}
+
+					Border blackline;
+
+					blackline = BorderFactory.createLineBorder(Color.black, 1);
+
+					String titulos[] = { "User Code", "Name", "Surname", "Birthdate"};
+					queryUserTable = new JTable(matrizTabla, titulos) {
+						public boolean editCellAt(int row, int column, java.util.EventObject e) {
+							return false;
+						}
+					};
+
+					queryUserTable.setSelectionBackground(new Color(46, 46, 46));
+					queryUserTable.setSelectionForeground(Color.WHITE);
+					queryUserTable.setRowMargin(0);
+					queryUserTable.setRowHeight(25);
+					queryUserTable.setBorder(blackline);
+					queryUserTable.setShowVerticalLines(true);
+					queryUserTable.setFont(new Font("Tahoma", Font.PLAIN, 12));
+					
+				if(scrollPane!=null) {
+					
+					
+					scrollPane.setViewportView(queryUserTable);
+					
+				}
+					
+					
+					JTableHeader tableHeader = 	queryUserTable.getTableHeader();
+					tableHeader.setBackground(new Color(20, 57, 122));
+					tableHeader.setForeground(Color.WHITE);
+					tableHeader.setFont(new Font("Tahoma", Font.BOLD, 15));
+					tableHeader.setBorder(blackline);
+					tableHeader.setEnabled(true);
+					
+					
+				}
+				
+				
+			}else if (user == null) {
+
+				JOptionPane.showMessageDialog(this, "User not found");
+			}
+			
+			
 		}
 	}
 }

@@ -57,12 +57,16 @@ public class AdministratorUserBDimplementation implements AdministratorControlle
 
 					rs = stmt.executeQuery();
 
+					
+					
 					if (rs.next()) {
 						usr = new User();
 						usr.setCodUser(wcodUser);
 						usr.setName(rs.getString("name"));
 						usr.setSurname(rs.getString("surname"));
 						usr.setBirthDate(rs.getDate("birthDate"));
+						
+					
 					} else
 						usr = null;
 				} catch (SQLException e) {
@@ -84,7 +88,7 @@ public class AdministratorUserBDimplementation implements AdministratorControlle
 						e.printStackTrace();
 					}
 				}
-
+			
 				return usr;
 
 	}
