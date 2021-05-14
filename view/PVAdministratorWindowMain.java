@@ -6,7 +6,11 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,13 +38,15 @@ import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import java.awt.event.KeyAdapter;
 
-public class PVAdministratorWindowMain extends JDialog implements ActionListener {
+public class PVAdministratorWindowMain extends JDialog implements ActionListener,KeyListener {
 
 	private final JPanel contentPanel = new JPanel();
 	private JButton btnLogout;;
 	private JLabel lblWelcome;
 	private JTextField tfCodeUser;
+	private JTextArea txtErrorCodeNotFoundM;
 	private JTextField tfName;
 	private JTextField tfSurname;
 	private JTextField tfBirthdate;
@@ -53,7 +59,6 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 	private PVMainWindowLogin login;
 	AdministratorController administratorInterface;
 	private JTextField tfUserCode;
-	private JTable tableModifyUser;
 	private JTextField tfTextFieldExtra;
 	private JTextField tfSearchUser;
 	private JTextField tfDeleteUser;
@@ -65,9 +70,11 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 	private JButton btnSearchUser;
 	private JTable table;
 	private JPanel panelSearchUser;
+	private JTable usersmodT;
+	private JButton btnModify;
+	private JTextArea txtErrorCodeNotFoundM2;
 	public PVAdministratorWindowMain(Administrator adm, AdministratorController administratorInterface,
 			PVMainWindowLogin pvMainWindowLogin) {
-		setModal(true);
 		setResizable(false);
 		this.login = pvMainWindowLogin;
 		this.administratorInterface = administratorInterface;
@@ -114,10 +121,19 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 
 		JLabel lblCodeUser = new JLabel("User Code:");
 		lblCodeUser.setFont(new Font("Tahoma", Font.PLAIN, 24));
+		
 		lblCodeUser.setBounds(166, 78, 145, 40);
 		panel3.add(lblCodeUser);
 
 		tfCodeUser = new JTextField();
+		tfCodeUser.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(tfCodeUser.getText().length()>= 10){
+					e.consume();
+			}
+		}});
+		tfCodeUser.addKeyListener(this);
 		tfCodeUser.setBounds(294, 78, 174, 35);
 		panel3.add(tfCodeUser);
 		tfCodeUser.setColumns(10);
@@ -128,6 +144,14 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		panel3.add(lblName);
 
 		tfName = new JTextField();
+		tfName.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(tfName.getText().length()>= 15){
+					e.consume();
+			}
+		}});
+		tfName.addKeyListener(this);
 		tfName.setColumns(10);
 		tfName.setBounds(294, 129, 174, 35);
 		panel3.add(tfName);
@@ -138,6 +162,13 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		panel3.add(lblSurname);
 
 		tfSurname = new JTextField();
+		tfSurname.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(tfSurname.getText().length()>= 15){
+					e.consume();
+			}
+		}});
 		tfSurname.setColumns(10);
 		tfSurname.setBounds(294, 175, 174, 35);
 		panel3.add(tfSurname);
@@ -158,6 +189,13 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		panel3.add(lblPassword);
 
 		pfpasswordField = new JPasswordField();
+		pfpasswordField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(pfpasswordField.getText().length()>= 15){
+					e.consume();
+			}
+		}});
 		pfpasswordField.setBounds(293, 272, 175, 35);
 		panel3.add(pfpasswordField);
 
@@ -167,6 +205,13 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		panel3.add(lblConfirmPassword);
 
 		pfConfirmPassword = new JPasswordField();
+		pfConfirmPassword.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(pfConfirmPassword.getText().length()>= 15){
+					e.consume();
+			}
+		}});
 		pfConfirmPassword.setBounds(294, 323, 174, 35);
 		panel3.add(pfConfirmPassword);
 
@@ -212,6 +257,17 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		panel3.add(btnCreate);
 
 		tfTextFieldExtra = new JTextField();
+	tfTextFieldExtra.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyTyped(KeyEvent e) {
+				if(		tfTextFieldExtra.getText().length()>= 10){
+				
+					e.consume();
+					
+			}
+		}});
+		
+					
 		tfTextFieldExtra.setBounds(347, 430, 152, 36);
 		panel3.add(tfTextFieldExtra);
 		tfTextFieldExtra.setColumns(10);
@@ -244,16 +300,78 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 		lblUserCode.setFont(new Font("Tahoma", Font.PLAIN, 24));
 		lblUserCode.setBounds(152, 62, 155, 39);
 		panel2.add(lblUserCode);
+		ArrayList<User> usersmod = administratorInterface.obtainUsers();
+		if (usersmod.size() > 0) {
+			String matrizTabla[][] = new String[usersmod.size()][4];
+			for (int i = 0; i < usersmod.size(); i++) {
 
-		tableModifyUser = new JTable();
-		tableModifyUser.setBounds(79, 158, 584, 271);
-		panel2.add(tableModifyUser);
+				matrizTabla[i][0] = usersmod.get(i).getCodUser();
+				matrizTabla[i][1] = usersmod.get(i).getName();
+				matrizTabla[i][2] = usersmod.get(i).getSurname();
+				matrizTabla[i][3] = usersmod.get(i).getBirthDate().toString();
 
-		JButton btnModify = new JButton("Modify");
+			}
+
+			Border blackline;
+
+			blackline = BorderFactory.createLineBorder(Color.black, 1);
+
+			JScrollPane scrollPaneMod = new JScrollPane();
+			scrollPaneMod.setBounds(58, 182, 660, 330);
+			panel2.add(scrollPaneMod);
+			String titulos[] = { "User code", "Name", "Surname", "Birthdate"};
+			usersmodT = new JTable(matrizTabla, titulos) {
+				public boolean editCellAt(int row, int column, java.util.EventObject e) {
+					return false;
+				}
+			};
+			;
+			usersmodT.setSelectionBackground(new Color(46, 46, 46));
+			usersmodT.setSelectionForeground(Color.WHITE);
+			usersmodT.setRowMargin(0);
+			usersmodT.setRowHeight(25);
+			usersmodT.setBorder(blackline);
+			usersmodT.setShowVerticalLines(true);
+			usersmodT.setFont(new Font("Tahoma", Font.PLAIN, 12));
+			if(scrollPaneMod!=null) {
+				
+				
+				scrollPaneMod.setViewportView(usersmodT);
+
+			}
+			JTableHeader tableHeader = usersmodT.getTableHeader();
+			tableHeader.setBackground(new Color(20, 57, 122));
+			tableHeader.setForeground(Color.WHITE);
+			tableHeader.setFont(new Font("Tahoma", Font.BOLD, 15));
+			tableHeader.setBorder(blackline);
+			tableHeader.setEnabled(true);
+		}
+		
+		
+		btnModify = new JButton("Modify");
 		btnModify.setBackground(new Color(211, 211, 211));
+		btnModify.addActionListener(this);
 		btnModify.setBounds(297, 112, 103, 23);
 		panel2.add(btnModify);
-
+		
+		  txtErrorCodeNotFoundM = new JTextArea();
+          txtErrorCodeNotFoundM.setBounds(447, 68, 181, 30);          
+          txtErrorCodeNotFoundM.setFont(new Font("Tahoma", Font.PLAIN, 15));
+          txtErrorCodeNotFoundM.setText("Error, user code is empty. ");
+          txtErrorCodeNotFoundM.setEditable(false);
+          txtErrorCodeNotFoundM.setBackground(new Color(175, 238, 238));
+          panel2.add(txtErrorCodeNotFoundM);    
+		txtErrorCodeNotFoundM.setVisible(false);
+		
+		 txtErrorCodeNotFoundM2 = new JTextArea();
+         txtErrorCodeNotFoundM2.setBounds(447, 68, 181, 30);          
+         txtErrorCodeNotFoundM2.setFont(new Font("Tahoma", Font.PLAIN, 15));
+         txtErrorCodeNotFoundM2.setText("Error, this user doesnt exist. ");
+         txtErrorCodeNotFoundM2.setEditable(false);
+         txtErrorCodeNotFoundM2.setBackground(new Color(175, 238, 238));
+         panel2.add(txtErrorCodeNotFoundM2);    
+		txtErrorCodeNotFoundM2.setVisible(false);
+		
 		panelSearchUser = new JPanel();
 		panelSearchUser.setBackground(new Color(176, 196, 222));
 		pestañas.addTab("Search User", panelSearchUser);
@@ -399,6 +517,53 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			int y = (int) ((dimension.getHeight() - login.getHeight()) / 2);
 			login.setLocation(x, y);
 		}
+		if(e.getSource().equals(btnModify)){
+			if(tfUserCode.getText()!=" "){
+				if(administratorInterface.queryUser(tfUserCode.getText())!=null){
+					User userMod=new User();
+					userMod=administratorInterface.queryUser(tfUserCode.getText());
+					PVModifyUser pvMod=new PVModifyUser(administratorInterface,userMod);
+					pvMod.setVisible(true);
+				}else{
+					txtErrorCodeNotFoundM2.setVisible(true);
+
+					Timer time = new Timer();
+					TimerTask error = new TimerTask() {
+
+						@Override
+						public void run() {
+						
+
+							txtErrorCodeNotFoundM2.setVisible(false);
+
+						}
+					};
+
+					time.schedule(error, 3500);
+				}
+				
+				
+				
+			
+			}else{
+				txtErrorCodeNotFoundM.setVisible(true);
+
+				Timer time = new Timer();
+				TimerTask error = new TimerTask() {
+
+					@Override
+					public void run() {
+					
+
+						txtErrorCodeNotFoundM.setVisible(false);
+
+					}
+				};
+
+				time.schedule(error, 3500);
+			}
+			
+		}
 		if(e.getSource().equals(btnSearchUser)){
 			User user = new User();
 
@@ -476,5 +641,23 @@ public class PVAdministratorWindowMain extends JDialog implements ActionListener
 			
 			
 		}
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
